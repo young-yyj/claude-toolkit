@@ -1,5 +1,5 @@
 ---
-name: y-git-history-clean
+name: sk-git-history-clean
 description: 重写 git 提交历史，去除 Co-Authored-By 尾缀、统一作者名、恢复 filter-branch 后悬空的附注标签。当用户要求清理 commit message、移除 co-authored-by 行、统一作者信息、或修复 git 历史元数据时触发。也适用于用户提到"整理 git 历史""去除提交尾缀""统一 git 作者"等场景。
 ---
 

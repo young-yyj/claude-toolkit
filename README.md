@@ -1,6 +1,6 @@
 # claude-toolkit — Claude Code 自定义扩展集
 
-为 Claude Code 定制的 4 个技能与 1 个命令，覆盖 GitHub 发布、项目结构规范化、AI 教程生成、对话总结四大场景。
+为 Claude Code 定制的 5 个技能与 2 个命令，覆盖 GitHub 发布、项目结构规范化、AI 教程生成、对话总结、文件审计、git 历史重写六大场景。
 
 ---
 
@@ -8,16 +8,36 @@
 
 | 技能 | 类型 | 触发方式 | 核心能力 |
 |------|------|----------|----------|
-| `y-github-audit` | 仪表盘 | `YY本地项目初次提交github` | 13 项并行安全 + 工程扫描，分级报告，勾选批量修复 |
-| `y-github-launch` | 线性向导 | `本地项目初次提交github` | 7 步顺序引导：扫描 → 检查 → 审查 → 推送 → Release |
-| `y-project-structure` | 规范器 | `整理项目结构` / `标准化项目` 等 | 三阶流程：评估规模 → 差异分析 → 逐项确认执行 |
-| `y-tutorial-builder` | 生成器 | `生成教程` / `写一份 XX 教程` 等 | 多源并行搜集 → 交叉验证 → 生成 ≥20000 字教科书级教程 |
+| `sk-git-history-clean` | git 历史重写 | "整理 git 历史" / "去除提交尾缀" 等 | 重写全部 commit：去 Co-Authored-By / 统一作者 / 恢复标签，六步安全执行 |
+| `sk-github-audit` | 仪表盘 | `YY本地项目初次提交github` | 13 项并行安全 + 工程扫描，分级报告，勾选批量修复 |
+| `sk-github-launch` | 线性向导 | `本地项目初次提交github` | 7 步顺序引导：扫描 → 检查 → 审查 → 推送 → Release |
+| `sk-project-structure` | 规范器 | `整理项目结构` / `标准化项目` 等 | 三阶流程：评估规模 → 差异分析 → 逐项确认执行 |
+| `sk-tutorial-builder` | 生成器 | `生成教程` / `写一份 XX 教程` 等 | 多源并行搜集 → 交叉验证 → 生成 ≥20000 字教科书级教程 |
 
 ---
 
 ## 各技能详情
 
-### y-github-audit — 全维度审计
+### sk-git-history-clean — git 历史清理
+
+**触发词：** "整理 git 历史"、"去除提交尾缀"、"统一 git 作者" 等
+
+**流程：**
+
+| 步骤 | 内容 |
+|------|------|
+| 1. 审计 | 扫描全部 commit 尾缀行、记录 commit 总数、列出所有作者名及标签类型 |
+| 2. 重写 | `git filter-branch` 清理 message（可选统一作者名），用户可选择目标名或"不做更改" |
+| 3. 验证分支 | 校验 commit 数量不变、尾缀已清除、作者名与预期一致 |
+| 4. 恢复标签 | 轻量标签直接迁移；附注标签从悬空对象抢救 tagger 信息 + annotation 内容并重建 |
+| 5. 终验 | 标签指向、tagger 信息、annotation 内容、commit 作者全部核对 |
+| 6. 记忆 | 保存 feedback memory 防止再次添加已清理的尾缀 |
+
+**红线约束：** 禁止增删改任何 commit 中的项目文件；禁止增删 commit 记录；禁止修改时间信息。
+
+**适用场景：** 需要批量清理 git 历史元数据、统一作者身份的项目维护者。
+
+### sk-github-audit — 全维度审计
 
 **触发词：** `YY本地项目初次提交github`
 
@@ -30,7 +50,7 @@
 
 **适用场景：** 只想诊断、自己挑选修复项的效率型用户；不一定要立刻 push。
 
-### y-github-launch — 首次上线向导
+### sk-github-launch — 首次上线向导
 
 **触发词：** `本地项目初次提交github`
 
@@ -48,7 +68,7 @@
 
 **适用场景：** 第一次推项目的用户，需要每步确认、按部就班的谨慎型体验。
 
-### y-github-audit vs y-github-launch
+### sk-github-audit vs sk-github-launch
 
 | | launch | audit |
 |------|--------|-------|
@@ -56,7 +76,7 @@
 | 体验 | 导游模式，每步一个决策点 | 体检报告模式，勾选后批量修复 |
 | 范围 | 含远程配置 + push + Release | 纯本地诊断 + 修复，不配远程 |
 
-### y-project-structure — 项目结构标准化
+### sk-project-structure — 项目结构标准化
 
 **触发词：** `整理项目结构`、`规范化目录`、`标准化项目`、`项目结构优化`、`搭建 Claude 项目`、`setup project structure`、`organize project`
 
@@ -68,7 +88,7 @@
 
 **标准结构要素：** `CLAUDE.md`、`.claude/settings.json`、`.gitignore`、`.env.example`、`src/`、`docs/ai-context/` 等。
 
-### y-tutorial-builder — AI 教程生成器
+### sk-tutorial-builder — AI 教程生成器
 
 **触发词：** `生成教程`、`写教程`、`从入门到精通`、`完整教程`、`详细教程`、`学习 XX`、`generate tutorial`、`write guide`
 
@@ -88,11 +108,17 @@
 
 ## 命令
 
-### y_save_summary — 对话总结保存
+### cmd-save-summary — 对话总结保存
 
 以知识优先的方式总结当前对话，保存为结构化 Markdown 文件并自动维护索引。输出包含：决策与结论、知识点、产物清单、待办事项。
 
-使用方式：在 Claude Code 中输入 `/y_save_summary`。
+使用方式：在 Claude Code 中输入 `/cmd-save-summary`。
+
+### cmd-audit-files — 文件操作审计
+
+扫描上一轮对话中的文件操作记录，按创建/修改/删除/移动分类整理为表格输出，附带统计汇总。
+
+使用方式：在 Claude Code 中输入 `/cmd-audit-files`。
 
 ---
 
@@ -104,25 +130,29 @@ claude-toolkit/
 ├── CLAUDE.md                          # 项目指南（给 AI 看）
 ├── .gitignore                         # Git 忽略规则
 ├── commands/                          # 自定义 Slash 命令
-│   └── y_save_summary.md              # 会话总结保存
+│   ├── cmd-audit-files.md               # 上一轮文件操作审计
+│   └── cmd-save-summary.md              # 会话总结保存
 └── skills/                            # 自定义技能集
-    ├── y-github-audit/                # 全维度审计技能
+    ├── sk-git-history-clean/            # git 历史清理技能
+    │   ├── SKILL.md                   # 技能定义
+    │   └── README_CN.md               # 中文使用说明
+    ├── sk-github-audit/                # 全维度审计技能
     │   ├── SKILL.md                   # 技能定义（流程、约束、触发条件）
     │   ├── README_CN.md               # 中文使用说明
     │   └── references/
     │       └── scan-rules.md          # 扫描规则详情
-    ├── y-github-launch/               # 首次上线向导技能
+    ├── sk-github-launch/               # 首次上线向导技能
     │   ├── SKILL.md                   # 技能定义
     │   ├── README_CN.md               # 中文使用说明
     │   └── references/
     │       ├── gitignore-templates.md # 各技术栈 .gitignore 模板
     │       └── readme-template.md     # 双语 README 模板
-    ├── y-project-structure/           # 项目结构标准化技能
+    ├── sk-project-structure/           # 项目结构标准化技能
     │   ├── SKILL.md                   # 技能定义
     │   ├── README_CN.md               # 中文使用说明
     │   └── references/
     │       └── standard-structure.md  # Claude Code 标准目录结构规范
-    └── y-tutorial-builder/            # AI 教程生成技能
+    └── sk-tutorial-builder/            # AI 教程生成技能
         ├── SKILL.md                   # 技能定义
         ├── README_CN.md               # 中文使用说明
         └── references/

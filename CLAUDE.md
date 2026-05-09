@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 4 个 skills、1 个 command，后续将扩展 hooks 等配置。
+本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 5 个 skills、2 个 command，后续将扩展 hooks 等配置。
 
 ## 项目性质
 
@@ -14,7 +14,7 @@
 ```
 claude-toolkit/
 ├── skills/
-│   └── y-<skill-name>/      # 每个 skill 一个目录，前缀 y-
+│   └── sk-<skill-name>/      # 每个 skill 一个目录，前缀 sk-
 │       ├── SKILL.md          # 技能定义（frontmatter + 执行流程）
 │       ├── README_CN.md      # 中文使用说明
 │       └── references/       # 参考资源（模板、规则等）
@@ -27,16 +27,18 @@ claude-toolkit/
 
 | 技能 | 类型 | 触发词 |
 |------|------|--------|
-| `y-github-audit` | 仪表盘审计 | `YY本地项目初次提交github` |
-| `y-github-launch` | 线性向导 | `本地项目初次提交github` |
-| `y-project-structure` | 结构规范器 | `整理项目结构` 等 |
-| `y-tutorial-builder` | 教程生成器 | `生成教程` 等 |
+| `sk-git-history-clean` | git 历史重写 | "整理 git 历史"、"去除提交尾缀" 等 |
+| `sk-github-audit` | 仪表盘审计 | `YY本地项目初次提交github` |
+| `sk-github-launch` | 线性向导 | `本地项目初次提交github` |
+| `sk-project-structure` | 结构规范器 | `整理项目结构` 等 |
+| `sk-tutorial-builder` | 教程生成器 | `生成教程` 等 |
 
 ## 命令清单
 
 | 命令 | 用途 |
 |------|------|
-| `y_save_summary` | 以知识优先方式总结对话并保存为结构化 Markdown，自动维护索引 |
+| `cmd-save-summary` | 以知识优先方式总结对话并保存为结构化 Markdown，自动维护索引 |
+| `cmd-audit-files` | 将上一轮对话中的文件操作记录整理为表格展示 |
 
 ## 文档约定
 
@@ -46,8 +48,8 @@ claude-toolkit/
 
 ## 开发注意事项
 
-- 新建 skill 遵循 `y-<name>/SKILL.md` + `README_CN.md` + `references/` 结构
+- 新建 skill 遵循 `sk-<name>/SKILL.md` + `README_CN.md` + `references/` 结构
 - SKILL.md 必须包含 frontmatter（name、description、allowed-tools 等）
 - 触发词设计避免冲突：audit 用 `YY` 前缀，launch 无前缀
-- 新建 command 命名为 `y_<name>.md`（与 skill 目录前缀 `y-` 对应，统一个人扩展标识）
+- 新建 command 命名为 `cmd-<name>.md`（与 skill 目录前缀 `sk-` 对应，统一个人扩展标识）
 - commands/hooks/settings 扩展内容放入对应顶层目录

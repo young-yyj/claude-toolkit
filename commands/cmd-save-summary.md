@@ -3,7 +3,7 @@ description: 以知识优先的方式总结本次对话并保存为结构化 Mar
 allowed-tools: [Read, Write, Bash]
 ---
 
-# y_save_summary
+# cmd-save-summary
 
 以**知识优先**的方式总结本次对话并保存为 Markdown 文件，输出语言为**中文**。
 
