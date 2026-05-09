@@ -1,13 +1,14 @@
 # CLAUDE.md
 
-本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 5 个 skills、2 个 command，后续将扩展 hooks 等配置。
+本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 5 个 skills、2 个 command、1 个 git hook 模板。
 
 ## 项目性质
 
 这是一个**静态扩展仓库**，不是可运行软件项目。内容可复制到任意项目的 `.claude/` 对应子目录下使用：
 - skills → `.claude/skills/`
 - commands → `.claude/commands/`
-- hooks 配置 → `.claude/settings.json`
+- hooks → 复制到任意项目的 `.git/hooks/` 或通过 `hooks/setup.sh` 全局安装
+- settings 配置 → `.claude/settings.json`
 
 ## 目录规范
 
@@ -19,7 +20,7 @@ claude-toolkit/
 │       ├── README_CN.md      # 中文使用说明
 │       └── references/       # 参考资源（模板、规则等）
 ├── commands/                 # 自定义 Slash 命令
-├── hooks/                    # （待扩展）hooks 配置片段
+├── hooks/                    # git hooks 模板（可分发）
 └── settings/                 # （待扩展）settings.json 配置片段
 ```
 

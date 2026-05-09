@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Commit message 校验：自动剥离 Co-Authored-By 尾缀行
+# 用法：将此文件复制到 .git/hooks/commit-msg 或配置全局 core.hooksPath
+set -e
+
+MSG_FILE="$1"
+
+if grep -qi 'Co-Authored-By' "$MSG_FILE"; then
+  sed -i '/Co-Authored-By/I d' "$MSG_FILE"
+  echo "已自动移除 Co-Authored-By 尾缀"
+fi

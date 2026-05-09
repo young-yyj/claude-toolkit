@@ -1,6 +1,6 @@
 # claude-toolkit — Claude Code 自定义扩展集
 
-为 Claude Code 定制的 5 个技能与 2 个命令，覆盖 GitHub 发布、项目结构规范化、AI 教程生成、对话总结、文件审计、git 历史重写六大场景。
+为 Claude Code 定制的 5 个技能、2 个命令、1 个 git hook 模板，覆盖 GitHub 发布、项目结构规范化、AI 教程生成、对话总结、文件审计、git 历史重写六大场景。
 
 ---
 
@@ -132,6 +132,9 @@ claude-toolkit/
 ├── commands/                          # 自定义 Slash 命令
 │   ├── cmd-audit-files.md               # 上一轮文件操作审计
 │   └── cmd-save-summary.md              # 会话总结保存
+├── hooks/                              # git hooks 模板
+│   ├── commit-msg                      # 自动剥离 Co-Authored-By 尾缀
+│   └── setup.sh                        # 一键安装脚本
 └── skills/                            # 自定义技能集
     ├── sk-git-history-clean/            # git 历史清理技能
     │   ├── SKILL.md                   # 技能定义
@@ -165,8 +168,9 @@ claude-toolkit/
 ## 使用方式
 
 1. 将本仓库克隆到本地，或将所需内容复制到项目的 `.claude/` 对应子目录下
-2. skills → `.claude/skills/`，commands → `.claude/commands/`，hooks 配置 → `.claude/settings.json`
-3. 在 Claude Code 对话中输入对应触发词即可启动
+2. skills → `.claude/skills/`，commands → `.claude/commands/`
+3. git hook 安装：`bash hooks/setup.sh`（全局）或 `bash hooks/setup.sh --local`（仅当前项目）
+4. 在 Claude Code 对话中输入对应触发词即可启动
 
 各技能/命令的详细用法和约束条件见各自 `SKILL.md` 和 `README_CN.md`。
 
