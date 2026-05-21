@@ -1,5 +1,5 @@
 ---
-name: project-structure
+name: sk-project-structure
 description: >
   将项目目录结构规范化为 Claude Code 推荐的标准布局。当用户提到"整理项目结构"、"规范化目录"、
   "标准化项目"、"项目结构优化"、"搭建 Claude 项目"、"setup project structure"、

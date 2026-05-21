@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 5 个 skills、2 个 command、1 个 git hook 模板。
+本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 7 个 skills、2 个 command、1 个 git hook 模板。
 
 ## 项目性质
 
@@ -33,6 +33,8 @@ claude-toolkit/
 | `sk-github-launch` | 线性向导 | `本地项目初次提交github` |
 | `sk-project-structure` | 结构规范器 | `整理项目结构` 等 |
 | `sk-tutorial-builder` | 教程生成器 | `生成教程` 等 |
+| `sk-prd-writer` | PRD 生成器 | `写PRD`、`产品需求文档` 等 |
+| `sk-pre-commit-doc-sync` | 提交守护 | `提交`、`commit`、`git commit`、`帮我提交` 等 |
 
 ## 命令清单
 

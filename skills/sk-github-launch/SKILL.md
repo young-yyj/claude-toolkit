@@ -1,5 +1,5 @@
 ---
-name: github-launch
+name: sk-github-launch
 description: |
   线性向导式引导用户完成本地项目首次上线 GitHub 的全流程：敏感信息扫描、.gitignore 检查、README 质量审查、连接远程、推送、Release 创建。
   唯一触发：用户说出"本地项目初次提交github"（不区分大小写，允许中英文混合）。

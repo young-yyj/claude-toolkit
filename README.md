@@ -1,6 +1,6 @@
 # claude-toolkit — Claude Code 自定义扩展集
 
-为 Claude Code 定制的 5 个技能、2 个命令、1 个 git hook 模板，覆盖 GitHub 发布、项目结构规范化、AI 教程生成、对话总结、文件审计、git 历史重写六大场景。
+为 Claude Code 定制的 7 个技能、2 个命令、1 个 git hook 模板，覆盖 GitHub 发布、项目结构规范化、AI 教程生成、对话总结、文件审计、git 历史重写、PRD 撰写、文档增量同步八大场景。
 
 ---
 
@@ -13,6 +13,8 @@
 | `sk-github-launch` | 线性向导 | `本地项目初次提交github` | 7 步顺序引导：扫描 → 检查 → 审查 → 推送 → Release |
 | `sk-project-structure` | 规范器 | `整理项目结构` / `标准化项目` 等 | 三阶流程：评估规模 → 差异分析 → 逐项确认执行 |
 | `sk-tutorial-builder` | 生成器 | `生成教程` / `写一份 XX 教程` 等 | 多源并行搜集 → 交叉验证 → 生成 ≥20000 字教科书级教程 |
+| `sk-prd-writer` | PRD 生成器 | `写PRD` / `产品需求文档` / `功能需求` 等 | 四阶段流程：三视角诊断 → 概念版对齐 → 范围冻结 → 落地版 PRD，六大盲区自检 |
+| `sk-pre-commit-doc-sync` | 提交守护 | `提交` / `commit` / `git commit` 等 | 提交前自动扫描敏感信息 + 文档同步，确认后执行提交 |
 
 ---
 
@@ -104,6 +106,40 @@
 
 **质量底线：** 至少 8 个有效来源（S/A 级 ≥ 3）、每个核心概念配可运行代码、专业术语标注英文原文、所有引用注明来源 URL。
 
+### sk-prd-writer — PRD 生成器
+
+**触发词：** `写PRD`、`产品需求文档`、`功能需求`、`产品想法` 等
+
+**流程（四阶段）：**
+
+| 阶段 | 内容 |
+|------|------|
+| Phase 1 | 三视角诊断：用户视角 → 商业视角 → 技术视角（上/下），四轮交互提问 |
+| Phase 2 | 概念版 PRD：≤200 字，核心用户 + 痛点 + ≤3 个功能 + 明确排除项 |
+| Phase 3 | 范围冻结：用户确认目标、功能、平台、排除项后锁定 |
+| Phase 4 | 落地版 PRD：四层结构（概述 / 功能列表 / 页面结构与导航 / 功能说明），六大盲区自检 |
+
+**核心约束：** 任何字段不得出现"待定""TBD"，每个功能必须覆盖用户流程、状态机、字段规范、文案规范、异常处理五大盲区。
+
+**适用场景：** 有产品想法但没写 PRD 经验的开发者，需要可直接 vibe coding 的精确需求文档。
+
+### sk-pre-commit-doc-sync — Git 提交守护
+
+**触发词：** `提交`、`commit`、`git commit`、`提交代码`、`帮我提交` 等
+
+**流程：**
+
+| 步骤 | 内容 |
+|------|------|
+| Step 1 | 获取暂存区 + 工作区变更文件清单 |
+| Step 2 | 提交前检查：Co-Authored-By 提醒 + 敏感信息扫描（10 种模式，仅扫变更文件） |
+| Step 3 | 文档同步：变更→文档映射，用户确认后逐项更新 |
+| Step 4 | 确认提交：汇总检查结果，询问后执行 `git commit` |
+
+**适用场景：** 每次 git commit 前自动触发，确保无敏感信息泄露、文档与代码同步。
+
+**与 neat-freak 的区别：** 本 skill 在提交时自动触发，neat-freak 在会话结束时全量审查，二者互补。
+
 ---
 
 ## 命令
@@ -155,12 +191,20 @@ claude-toolkit/
     │   ├── README_CN.md               # 中文使用说明
     │   └── references/
     │       └── standard-structure.md  # Claude Code 标准目录结构规范
-    └── sk-tutorial-builder/            # AI 教程生成技能
-        ├── SKILL.md                   # 技能定义
+    ├── sk-tutorial-builder/            # AI 教程生成技能
+    │   ├── SKILL.md                   # 技能定义
+    │   ├── README_CN.md               # 中文使用说明
+    │   └── references/
+    │       ├── outlines.md            # 四种知识点类型大纲模板
+    │       └── quality_guide.md       # 来源评级、搜索策略、质量检查清单
+    ├── sk-prd-writer/                  # PRD 生成技能
+    │   ├── SKILL.md                   # 技能定义（四阶段流程 + 六大盲区）
+    │   └── README_CN.md               # 中文使用说明
+    └── sk-pre-commit-doc-sync/        # 提交前文档增量同步技能
+        ├── SKILL.md                   # 技能定义（六步执行 + 尾缀清理）
         ├── README_CN.md               # 中文使用说明
         └── references/
-            ├── outlines.md            # 四种知识点类型大纲模板
-            └── quality_guide.md       # 来源评级、搜索策略、质量检查清单
+            └── mapping-rules.md       # 变更→文档映射规则
 ```
 
 ---

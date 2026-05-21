@@ -1,5 +1,5 @@
 ---
-name: tutorial-builder
+name: sk-tutorial-builder
 description: |
   生成 AI 领域知识点的完整 Markdown 教程。自动进行全网多源资料收集、交叉验证、结构化整理，输出不少于 20000 字的教科书级教程。
   适用于：生成教程、写教程、从入门到精通、完整教程、详细教程、学习{知识点}、AI 教程、深度学习教程。

@@ -1,5 +1,5 @@
 ---
-name: github-audit
+name: sk-github-audit
 description: |
   仪表盘式全局审计本地项目健康状态（敏感信息、.gitignore、README、Release 可行性），用户勾选处理项后批量修复。
   唯一触发：用户说出"YY本地项目初次提交github"（不区分大小写，允许中英文混合）。
