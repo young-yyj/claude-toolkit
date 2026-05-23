@@ -34,7 +34,7 @@ claude-toolkit/
 | `sk-project-structure` | 结构规范器 | `整理项目结构` 等 |
 | `sk-tutorial-builder` | 教程生成器 | `生成教程` 等 |
 | `sk-prd-writer` | PRD 生成器 | `写PRD`、`产品需求文档` 等 |
-| `sk-pre-commit-doc-sync` | 提交守护 | `提交`、`commit`、`git commit`、`帮我提交` 等 |
+| `sk-commit-guard` | 提交守护 | `准备提交` |
 
 ## 命令清单
 

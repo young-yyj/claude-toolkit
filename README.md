@@ -1,6 +1,6 @@
 # claude-toolkit — Claude Code 自定义扩展集
 
-为 Claude Code 定制的 7 个技能、2 个命令、1 个 git hook 模板，覆盖 GitHub 发布、项目结构规范化、AI 教程生成、对话总结、文件审计、git 历史重写、PRD 撰写、文档增量同步八大场景。
+为 Claude Code 定制的 7 个技能、2 个命令、1 个 git hook 模板，覆盖 GitHub 发布、项目结构规范化、AI 教程生成、对话总结、文件审计、git 历史重写、PRD 撰写、提交守护八大场景。
 
 ---
 
@@ -14,7 +14,7 @@
 | `sk-project-structure` | 规范器 | `整理项目结构` / `标准化项目` 等 | 三阶流程：评估规模 → 差异分析 → 逐项确认执行 |
 | `sk-tutorial-builder` | 生成器 | `生成教程` / `写一份 XX 教程` 等 | 多源并行搜集 → 交叉验证 → 生成 ≥20000 字教科书级教程 |
 | `sk-prd-writer` | PRD 生成器 | `写PRD` / `产品需求文档` / `功能需求` 等 | 四阶段流程：三视角诊断 → 概念版对齐 → 范围冻结 → 落地版 PRD，六大盲区自检 |
-| `sk-pre-commit-doc-sync` | 提交守护 | `提交` / `commit` / `git commit` 等 | 提交前自动扫描敏感信息 + 文档同步，确认后执行提交 |
+| `sk-commit-guard` | 提交守护 | `准备提交` | 自动同步全部文档 + 敏感信息扫描 + 生成 commit message + 本地提交 |
 
 ---
 
@@ -123,22 +123,22 @@
 
 **适用场景：** 有产品想法但没写 PRD 经验的开发者，需要可直接 vibe coding 的精确需求文档。
 
-### sk-pre-commit-doc-sync — Git 提交守护
+### sk-commit-guard — Git 提交守护
 
-**触发词：** `提交`、`commit`、`git commit`、`提交代码`、`帮我提交` 等
+**触发词：** `准备提交`
 
 **流程：**
 
 | 步骤 | 内容 |
 |------|------|
-| Step 1 | 获取暂存区 + 工作区变更文件清单 |
-| Step 2 | 提交前检查：Co-Authored-By 提醒 + 敏感信息扫描（10 种模式，仅扫变更文件） |
-| Step 3 | 文档同步：变更→文档映射，用户确认后逐项更新 |
-| Step 4 | 确认提交：汇总检查结果，询问后执行 `git commit` |
+| Step 1 | `git diff` 获取暂存区 + 工作区全部变更 |
+| Step 2 | 文档全量同步：自动发现项目内所有说明文档，按变更逐一更新 |
+| Step 3 | 提交前检查：Co-Authored-By 提醒 + 敏感信息扫描（10 种模式，仅扫变更文件） |
+| Step 4 | 确认提交：展示汇总 + 自动生成英文 commit message（Conventional Commits），用户确认/修改后执行 |
 
-**适用场景：** 每次 git commit 前自动触发，确保无敏感信息泄露、文档与代码同步。
+**处理的文档：** 覆盖项目内所有说明文档 — CLAUDE.md、README.md、README_CN.md、AGENTS.md、doc/、ai-context/、skills/*/ 等，不存在的自动跳过。
 
-**与 neat-freak 的区别：** 本 skill 在提交时自动触发，neat-freak 在会话结束时全量审查，二者互补。
+**适用场景：** 需要确保文档与代码完全同步后再提交的开发者。
 
 ---
 
@@ -200,8 +200,8 @@ claude-toolkit/
     ├── sk-prd-writer/                  # PRD 生成技能
     │   ├── SKILL.md                   # 技能定义（四阶段流程 + 六大盲区）
     │   └── README_CN.md               # 中文使用说明
-    └── sk-pre-commit-doc-sync/        # 提交前文档增量同步技能
-        ├── SKILL.md                   # 技能定义（六步执行 + 尾缀清理）
+    └── sk-commit-guard/        # 提交守护技能
+        ├── SKILL.md                   # 技能定义（四步执行：diff → 文档同步 → 检查 → 提交）
         ├── README_CN.md               # 中文使用说明
         └── references/
             └── mapping-rules.md       # 变更→文档映射规则
