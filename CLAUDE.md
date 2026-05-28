@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 7 个 skills、2 个 command、1 个 git hook 模板。
+本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 9 个 skills、2 个 command、1 个 git hook 模板。
 
 ## 项目性质
 
@@ -18,7 +18,8 @@ claude-toolkit/
 │   └── sk-<skill-name>/      # 每个 skill 一个目录，前缀 sk-
 │       ├── SKILL.md          # 技能定义（frontmatter + 执行流程）
 │       ├── README_CN.md      # 中文使用说明
-│       └── references/       # 参考资源（模板、规则等）
+│       ├── references/       # 参考资源（模板、规则等，按需）
+│       └── scripts/          # bundled 辅助脚本（按需）
 ├── commands/                 # 自定义 Slash 命令
 ├── hooks/                    # git hooks 模板（可分发）
 └── settings/                 # （待扩展）settings.json 配置片段
@@ -32,7 +33,9 @@ claude-toolkit/
 | `sk-github-audit` | 仪表盘审计 | `YY本地项目初次提交github` |
 | `sk-github-launch` | 线性向导 | `本地项目初次提交github` |
 | `sk-project-structure` | 结构规范器 | `整理项目结构` 等 |
+| `sk-ai-context-docs` | AI 上下文文档生成器 | `生成 AI 上下文文档`、`docs/ai-context`、`AI context` 等 |
 | `sk-tutorial-builder` | 教程生成器 | `生成教程` 等 |
+| `sk-ts-translate` | Qt TS 翻译 | `TS 文件翻译`、`Qt Linguist`、`unfinished 翻译` 等 |
 | `sk-prd-writer` | PRD 生成器 | `写PRD`、`产品需求文档` 等 |
 | `sk-commit-guard` | 提交守护 | `准备提交` |
 

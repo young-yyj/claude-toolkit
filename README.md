@@ -1,6 +1,6 @@
 # claude-toolkit — Claude Code 自定义扩展集
 
-为 Claude Code 定制的 7 个技能、2 个命令、1 个 git hook 模板，覆盖 GitHub 发布、项目结构规范化、AI 教程生成、对话总结、文件审计、git 历史重写、PRD 撰写、提交守护八大场景。
+为 Claude Code 定制的 9 个技能、2 个命令、1 个 git hook 模板，覆盖 GitHub 发布、项目结构规范化、AI 上下文文档、AI 教程生成、Qt TS 翻译、对话总结、文件审计、git 历史重写、PRD 撰写、提交守护等场景。
 
 ---
 
@@ -12,7 +12,9 @@
 | `sk-github-audit` | 仪表盘 | `YY本地项目初次提交github` | 13 项并行安全 + 工程扫描，分级报告，勾选批量修复 |
 | `sk-github-launch` | 线性向导 | `本地项目初次提交github` | 7 步顺序引导：扫描 → 检查 → 审查 → 推送 → Release |
 | `sk-project-structure` | 规范器 | `整理项目结构` / `标准化项目` 等 | 三阶流程：评估规模 → 差异分析 → 逐项确认执行 |
+| `sk-ai-context-docs` | AI 上下文文档 | `生成 AI 上下文文档` / `docs/ai-context` / `AI context` 等 | 项目扫描 → 结构提案 → 用户确认 → 生成 `docs/ai-context/` → 质量门禁 |
 | `sk-tutorial-builder` | 生成器 | `生成教程` / `写一份 XX 教程` 等 | 多源并行搜集 → 交叉验证 → 生成 ≥20000 字教科书级教程 |
+| `sk-ts-translate` | Qt TS 翻译 | `TS 文件翻译` / `Qt Linguist` / `unfinished 翻译` 等 | 提取 unfinished 条目 → AI 翻译 → bundled 脚本应用 → 输出 `_translated.ts` |
 | `sk-prd-writer` | PRD 生成器 | `写PRD` / `产品需求文档` / `功能需求` 等 | 四阶段流程：三视角诊断 → 概念版对齐 → 范围冻结 → 落地版 PRD，六大盲区自检 |
 | `sk-commit-guard` | 提交守护 | `准备提交` | 自动同步全部文档 + 敏感信息扫描 + 生成 commit message + 本地提交 |
 
@@ -90,6 +92,24 @@
 
 **标准结构要素：** `CLAUDE.md`、`.claude/settings.json`、`.gitignore`、`.env.example`、`src/`、`docs/ai-context/` 等。
 
+### sk-ai-context-docs — AI 上下文文档生成器
+
+**触发词：** `生成 AI 上下文文档`、`生成 docs/ai-context`、`整理项目上下文给 AI 使用`、`AI context`、`Claude 上下文`、`agent 上下文索引`
+
+**流程：**
+
+| 阶段 | 内容 |
+|------|------|
+| Phase 1 | 项目扫描：读取 AI 指南、README、构建文件、入口文件、配置、源码与既有 `docs/ai-context/` |
+| Phase 2 | 结构提案：判定规模，列出计划生成/更新/跳过的文档及来源 |
+| Phase 3 | 用户确认：结构确认后再写入，冲突或多候选时提出具体问题 |
+| Phase 4 | 文档生成：固定输出到 `docs/ai-context/`，按入口 → 地图 → 模块/流程顺序生成 |
+| Phase 5 | 质量门禁：检查路径、命令、模块、流程、风险是否均有项目来源 |
+
+**核心约束：** 不编造项目背景、路径、命令、模块、依赖或外部系统；不生成空模板、`TODO`、`TBD` 或占位段落。
+
+**适用场景：** 需要把项目真实文档、构建配置、源码入口和模块结构沉淀为 AI 可快速读取资料的项目。
+
 ### sk-tutorial-builder — AI 教程生成器
 
 **触发词：** `生成教程`、`写教程`、`从入门到精通`、`完整教程`、`详细教程`、`学习 XX`、`generate tutorial`、`write guide`
@@ -105,6 +125,20 @@
 7. 保存为 `{知识点}_从入门到精通.md`
 
 **质量底线：** 至少 8 个有效来源（S/A 级 ≥ 3）、每个核心概念配可运行代码、专业术语标注英文原文、所有引用注明来源 URL。
+
+### sk-ts-translate — Qt Linguist TS 文件翻译工具
+
+**触发词：** `TS 文件翻译`、`Qt Linguist`、`unfinished 翻译`、`批量翻译`、`? 标记翻译`
+
+**流程：**
+
+1. 发现 `.ts` 文件并提取 `type="unfinished"` 条目
+2. AI 翻译目标文本，保留 Qt 占位符、换行和特殊字符
+3. 使用 bundled 脚本生成映射并应用到新文件
+4. 输出 `<原文件名>_translated.ts`，源文件只读不改
+5. 验证无 `unfinished` 残留且仅翻译元素发生变化
+
+**适用场景：** 需要批量补全 Qt Linguist `.ts` 翻译文件的多语言项目。
 
 ### sk-prd-writer — PRD 生成器
 
@@ -191,16 +225,25 @@ claude-toolkit/
     │   ├── README_CN.md               # 中文使用说明
     │   └── references/
     │       └── standard-structure.md  # Claude Code 标准目录结构规范
+    ├── sk-ai-context-docs/             # AI 上下文文档生成技能
+    │   ├── SKILL.md                   # 技能定义（扫描 → 提案 → 生成 → 自检）
+    │   ├── README_CN.md               # 中文使用说明
+    │   └── references/
+    │       └── document-rules.md      # 文档结构与质量规则
     ├── sk-tutorial-builder/            # AI 教程生成技能
     │   ├── SKILL.md                   # 技能定义
     │   ├── README_CN.md               # 中文使用说明
     │   └── references/
     │       ├── outlines.md            # 四种知识点类型大纲模板
     │       └── quality_guide.md       # 来源评级、搜索策略、质量检查清单
+    ├── sk-ts-translate/                # Qt TS 翻译技能
+    │   ├── SKILL.md                   # 技能定义（提取 → 翻译 → 应用 → 验证）
+    │   ├── README_CN.md               # 中文使用说明
+    │   └── scripts/                   # bundled TS 处理脚本
     ├── sk-prd-writer/                  # PRD 生成技能
     │   ├── SKILL.md                   # 技能定义（四阶段流程 + 六大盲区）
     │   └── README_CN.md               # 中文使用说明
-    └── sk-commit-guard/        # 提交守护技能
+    └── sk-commit-guard/                # 提交守护技能
         ├── SKILL.md                   # 技能定义（四步执行：diff → 文档同步 → 检查 → 提交）
         ├── README_CN.md               # 中文使用说明
         └── references/
