@@ -16,7 +16,7 @@
 | `sk-tutorial-builder` | 生成器 | `生成教程` / `写一份 XX 教程` 等 | 多源并行搜集 → 交叉验证 → 生成 ≥20000 字教科书级教程 |
 | `sk-ts-translate` | Qt TS 翻译 | `TS 文件翻译` / `Qt Linguist` / `unfinished 翻译` 等 | 提取 unfinished 条目 → AI 翻译 → bundled 脚本应用 → 输出 `_translated.ts` |
 | `sk-prd-writer` | PRD 生成器 | `写PRD` / `产品需求文档` / `功能需求` 等 | 四阶段流程：三视角诊断 → 概念版对齐 → 范围冻结 → 落地版 PRD，六大盲区自检 |
-| `sk-commit-guard` | 提交守护 | `准备提交` | 自动同步全部文档 + 敏感信息扫描 + 生成 commit message + 本地提交 |
+| `sk-commit-guard` | 提交守护 | `准备提交` | 自动同步全部文档 + 敏感信息扫描 + 确认带摘要 commit message + 本地提交 |
 
 ---
 
@@ -165,10 +165,10 @@
 
 | 步骤 | 内容 |
 |------|------|
-| Step 1 | `git diff` 获取暂存区 + 工作区全部变更 |
+| Step 1 | `git diff` / `git status` 获取暂存区、工作区和未跟踪文件的全部变更 |
 | Step 2 | 文档全量同步：自动发现项目内所有说明文档，按变更逐一更新 |
 | Step 3 | 提交前检查：Co-Authored-By 提醒 + 敏感信息扫描（10 种模式，仅扫变更文件） |
-| Step 4 | 确认提交：展示汇总 + 自动生成英文 commit message（Conventional Commits），用户确认/修改后执行 |
+| Step 4 | 确认提交：先询问 message 语言，生成带摘要的 Conventional Commits message，展示完整 message，用户确认后只暂存确认文件并执行 |
 
 **处理的文档：** 覆盖项目内所有说明文档 — CLAUDE.md、README.md、README_CN.md、AGENTS.md、doc/、ai-context/、skills/*/ 等，不存在的自动跳过。
 

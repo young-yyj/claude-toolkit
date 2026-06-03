@@ -4,7 +4,7 @@ description: |
   当用户明确说出"准备提交"时触发。通过 git diff 获取本次变更，
   自动同步项目中所有说明文档（CLAUDE.md、README.md、README_CN.md、
   AGENTS.md、doc/、ai-context/、skills/*/ 等），
-  确保文档全部最新后自动生成 commit message 并执行本地提交。
+  确保文档全部最新后询问 message 语言，生成带摘要的 commit message，用户确认后执行本地提交。
 effort: medium
 context: fork
 allowed-tools:
@@ -18,11 +18,11 @@ allowed-tools:
 
 # Git 提交守护
 
-用户明确说出"准备提交"时触发。流程：获取变更 → 文档全量同步 → 提交前检查 → 自动生成提交信息并提交。
+用户明确说出"准备提交"时触发。流程：获取变更 → 文档全量同步 → 提交前检查 → 询问 message 语言 → 生成带摘要的提交信息 → 用户确认后提交。
 
 ## 功能说明
 
-拦截"准备提交"指令，通过 `git diff` 查看本次所有修改文件，自动更新项目中所有说明文档，全部确认最新后执行本地提交。
+拦截"准备提交"指令，通过 `git diff` 查看本次所有修改文件，自动更新项目中所有说明文档，全部确认最新后询问 message 语言，生成带摘要的 commit message，并在用户确认后执行本地提交。
 
 ---
 
@@ -84,7 +84,7 @@ git ls-files --others --exclude-standard
 
 ### Step 2: 文档全量同步
 
-根据 Step 1 的变更文件清单，自动发现并更新项目中所有说明文档。**本步骤为强制性执行，不等待用户逐项确认。**
+根据 Step 1 的变更文件清单，自动发现并分析项目中所有说明文档。**本步骤为强制性分析流程，不等待用户逐项确认每个文档是否需要检查；但实际写入、删除、移动或重命名任何文件前，必须列出待修改文件和修改内容，并遵循上层 AGENTS/用户确认规则等待确认。**
 
 #### 2.1 文档发现
 
@@ -163,8 +163,15 @@ git ls-files --others --exclude-standard
 | S5 | AWS Access Key | `AKIA[0-9A-Z]{16}` |
 | S6 | Generic password | `password\s*[:=]\s*["\'][^"\']+["\']` |
 | S7 | Generic secret | `secret\s*[:=]\s*["\'][^"\']+["\']` |
-| S8 | Private key header | `-----BEGIN (RSA \|EC \|DSA \|OPENSSH )?PRIVATE KEY-----` |
-| S9 | Database URI with creds | `(mongodb\|mysql\|postgres\|postgresql)://[^@]+:[^@]+@` |
+| S8 | Private key header | 见下方代码块 |
+| S9 | Database URI with creds | 见下方代码块 |
+
+含 alternation 的正则不要直接复制 Markdown 表格转义形式；执行 Grep/rg 时使用下列未转义版本：
+
+```text
+S8: -----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----
+S9: (mongodb|mysql|postgres|postgresql)://[^@]+:[^@]+@
+```
 | S10 | JWT Token | `eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}` |
 
 **结果处理：**
@@ -177,11 +184,24 @@ git ls-files --others --exclude-standard
 
 ### Step 4: 确认提交
 
-所有文档同步完成、检查通过后，展示最终汇总并生成 commit message。
+所有文档同步完成、检查通过后，先询问 commit message 语言，再生成带摘要的 commit message，最后展示汇总和完整 message 给用户确认。
 
-#### 4.1 自动生成 commit message
+#### 4.1 询问 commit message 语言
 
-根据 `git diff --stat` 和变更文件列表，综合分析后按 Conventional Commits 格式**用英文**生成：
+生成 commit message 前，必须先询问用户希望使用的语言，并等待用户回复：
+
+```
+请选择 commit message 语言：
+1. 中文
+2. 英文
+3. 其他，请说明
+```
+
+用户可以直接回复 `1`、`2`、`3`，也可以回复 `中文`、`英文` 或其他语言说明。
+
+#### 4.2 生成带摘要的 commit message
+
+根据用户选择的语言、`git diff --stat` 和变更文件列表，综合分析后按 Conventional Commits 格式生成 commit message。标题使用 Conventional Commits 前缀，正文必须包含变更摘要。
 
 | 前缀 | 适用场景 |
 |------|----------|
@@ -192,39 +212,70 @@ git ls-files --others --exclude-standard
 | `chore:` | 配置、hooks、依赖等杂项 |
 
 **生成要求：**
-- 使用英文描述，简洁概括本次变更的核心内容
-- **不得在 message 中添加 `Co-Authored-By` 尾缀行**
+- 标题简洁概括本次变更的核心内容。
+- 正文必须包含摘要，格式类似：`变更摘要：` + 若干条 bullet。
+- 如果用户选择英文，正文摘要标题可使用 `Change summary:`。
+- 如果用户选择其他语言，标题和摘要正文按用户指定语言生成。
+- **不得在 message 中添加 `Co-Authored-By` 尾缀行**。
 
-#### 4.2 展示汇总并询问
+**中文示例：**
+
+```text
+feat: 增加流程状态处理逻辑
+
+变更摘要：
+- 新增流程状态更新入口，统一处理运行中、成功和失败状态。
+- 在主要执行流程中接入状态更新调用。
+- 增加异常场景下的错误信息记录。
+- 调整结果结构，补充状态和更新时间字段。
+- 更新相关接口说明文档。
+```
+
+#### 4.3 展示汇总并确认 commit message
+
+拟写 commit message 后，必须展示本次将提交的文件清单和完整 message 给用户确认，不得直接提交。
 
 ```
+以下示例以英文为例。
+
 📦 提交前检查汇总
 
-变更文件：3 个
-  M src/config.ts
-  A src/NewService.cs
-  M docs/files.md
+本次将提交文件：3 个
+  M src/workflow.ts
+  A src/workflow-state.ts
+  M docs/usage.md
 
 文档同步：✅ 已完成（3/5 更新，2 跳过）
 安全检查：✅ 通过
 
-建议 commit message：
-  feat: add NewService with pipe connection support
+拟使用 commit message：
 
-确认提交？(yes / 输入新 message / cancel)
+feat: add workflow state handling
+
+Change summary:
+- Add workflow state handling for core execution paths.
+- Update workflow integration for state persistence.
+- Refresh usage docs for the new behavior.
+
+确认使用该文件清单和 commit message 并提交？
+可回复：是 / 否 / 其他补充 / 1 / 2 / yes / no
 ```
 
-- **yes**（或直接确认）：使用生成的 message，执行提交
-- **输入新 message**：使用用户提供的 message 替换，执行提交
-- **cancel**：终止，不做任何操作
+用户回复处理规则：
 
-#### 4.3 执行提交
+- `是`、`yes`、`1`：使用当前确认的文件清单和拟定 message 执行提交。
+- `否`、`no`、`2`：取消提交，不执行 `git commit`。
+- `其他补充` 或任何补充文本：根据用户补充修改 commit message，然后再次展示完整 message 并等待确认。
+- 如果用户输入含糊，先澄清，不要提交。
+
+#### 4.4 执行提交
 
 ```bash
-git add -A
-git commit -m "<message>"
+git add <confirmed-file-1> <confirmed-file-2>
+git diff --cached --name-status
+git commit -m "<title>" -m "<summary body>"
 ```
 
-> 绝不使用 `--no-verify` 跳过 hooks。不执行 `git push`。
+> `confirmed files` 指用户最终确认纳入本次提交的完整文件集合。执行 `git commit` 前必须核对 `git diff --cached --name-status`，确认暂存区只包含该文件集合；若发现未确认的 staged 文件，必须停止并报告用户处理。绝不使用 `--no-verify` 跳过 hooks。不执行 `git push`。
 
 提交完成后输出 commit hash 和分支名。

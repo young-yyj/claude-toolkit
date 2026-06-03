@@ -1,6 +1,6 @@
 # Git 提交守护
 
-用户说出"准备提交"时触发。通过 `git diff` 获取本次变更，自动同步项目中所有说明文档，确保文档全部最新后自动生成 commit message 并执行本地提交。
+用户说出"准备提交"时触发。通过 `git diff` / `git status` 获取本次变更，自动同步项目中所有说明文档，确保文档全部最新后先询问 commit message 语言，生成带摘要的 commit message，展示完整 message 并经用户确认后执行本地提交。
 
 ## 触发方式
 
@@ -10,10 +10,10 @@
 
 ## 工作流程
 
-1. **获取变更** — `git diff` 获取暂存区和工作区的全部变更文件
+1. **获取变更** — `git diff` / `git status` 获取暂存区、工作区和未跟踪文件的全部变更
 2. **文档全量同步** — 自动发现项目内所有说明文档（CLAUDE.md、README.md、README_CN.md、AGENTS.md、doc/、ai-context/、skills/*/ 等），根据变更内容自动更新并汇报结果
-3. **提交前检查** — 提醒避免 `Co-Authored-By` 尾缀；对变更文件扫描敏感信息（API Key、密码、令牌等）
-4. **确认提交** — 展示汇总，根据变更文件自动生成英文 commit message（Conventional Commits 格式），展示给用户确认/修改后执行 `git commit`
+3. **提交前检查** — 提醒不得添加 `Co-Authored-By` 尾缀；对变更文件扫描敏感信息（API Key、密码、令牌等）
+4. **确认提交** — 先询问 commit message 语言，生成带摘要的 Conventional Commits message，展示完整 message，用户确认后只暂存已确认文件并执行 `git commit`
 
 ## 处理的文档
 
@@ -29,9 +29,9 @@
 
 不存在的文档会自动跳过。
 
-## 自动生成 commit message
+## 生成 commit message
 
-根据变更内容按 Conventional Commits 格式用英文自动生成：
+先询问用户选择中文、英文或其他语言，再根据变更内容按 Conventional Commits 格式生成对应语言的带摘要 commit message：
 
 | 前缀 | 适用场景 |
 |------|----------|
@@ -41,7 +41,7 @@
 | `docs:` | 纯文档变更 |
 | `chore:` | 配置、hooks、依赖等杂项 |
 
-根据变更文件综合分析后按 Conventional Commits 格式用英文自动生成。生成后展示给用户，可选择直接使用、修改、或取消提交。**不会添加 `Co-Authored-By` 尾缀行。**
+根据变更文件综合分析后生成标题和正文摘要，正文必须包含 `变更摘要：`、`Change summary:` 或对应语言的摘要标题。生成后展示完整 message，用户可回复 `是 / 否 / 其他补充 / 1 / 2 / yes / no` 来确认、取消或补充修改。确认提交时只暂存用户确认的文件，不使用 `git add -A`。**不得添加 `Co-Authored-By` 尾缀行。**
 
 ## 与其他 Skill 的区别
 
@@ -57,5 +57,5 @@
 - 文档同步为强制性步骤，确保所有文档最新后才进入提交
 - 敏感信息扫描仅针对本次变更文件，不扫全项目
 - git hooks 不会被跳过
-- 最终 commit 执行前会再次确认
+- 最终 commit 执行前会展示完整 message，并等待用户明确确认
 - 不会执行 `git push`
