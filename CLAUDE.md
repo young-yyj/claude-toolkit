@@ -4,11 +4,12 @@
 
 ## 项目性质
 
-这是一个**静态扩展仓库**，不是可运行软件项目。内容可复制到任意项目的 `.claude/` 对应子目录下使用：
+这是一个**静态扩展仓库**，不是可运行软件项目。内容可按类别分发到不同位置：
 - skills → `.claude/skills/`
 - commands → `.claude/commands/`
 - hooks → 复制到任意项目的 `.git/hooks/` 或通过 `hooks/setup.sh` 全局安装
 - settings 配置 → `.claude/settings.json`
+- agent-instructions → 用户级 AI 协作规范，按平台放入对应配置目录（Claude Code `~/.claude/CLAUDE.md`、Codex `~/.codex/AGENTS.md`、OpenCode `~/.config/opencode/AGENTS.md`）
 
 ## 目录规范
 
@@ -22,7 +23,11 @@ claude-toolkit/
 │       └── scripts/          # bundled 辅助脚本（按需）
 ├── commands/                 # 自定义 Slash 命令
 ├── hooks/                    # git hooks 模板（可分发）
-└── settings/                 # （待扩展）settings.json 配置片段
+├── settings/                 # （待扩展）settings.json 配置片段
+└── agent-instructions/       # 用户级 AI 协作规范（按平台分发）
+    ├── claude-code/          # Claude Code 版
+    ├── codex/                # Codex (CLI / Desktop) 版
+    └── opencode/             # OpenCode 版
 ```
 
 ## 技能清单

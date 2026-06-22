@@ -205,6 +205,10 @@ claude-toolkit/
 ├── hooks/                              # git hooks 模板
 │   ├── commit-msg                      # 自动剥离 Co-Authored-By 尾缀
 │   └── setup.sh                        # 一键安装脚本
+├── agent-instructions/                # 用户级 AI 协作规范（按平台分发）
+│   ├── claude-code/                    # Claude Code 版 → ~/.claude/CLAUDE.md
+│   ├── codex/                          # Codex 版 → ~/.codex/AGENTS.md
+│   └── opencode/                       # OpenCode 版 → ~/.config/opencode/AGENTS.md
 └── skills/                            # 自定义技能集
     ├── sk-git-history-clean/            # git 历史清理技能
     │   ├── SKILL.md                   # 技能定义
