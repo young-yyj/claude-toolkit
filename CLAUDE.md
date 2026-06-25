@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 9 个 skills、2 个 command、1 个 git hook 模板。
+本项目是 claude-toolkit — Claude Code 自定义扩展集，当前包含 9 个 skills、2 个 command、1 个 git hook 模板、1 个 mcp 工具文档集。
 
 ## 项目性质
 
@@ -23,6 +23,7 @@ claude-toolkit/
 │       └── scripts/          # bundled 辅助脚本（按需）
 ├── commands/                 # 自定义 Slash 命令
 ├── hooks/                    # git hooks 模板（可分发）
+├── mcp/                      # MCP/Skill 工具介绍与配置文档
 ├── settings/                 # （待扩展）settings.json 配置片段
 └── agent-instructions/       # 用户级 AI 协作规范（按平台分发）
     ├── claude-code/          # Claude Code 版

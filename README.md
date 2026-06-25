@@ -1,6 +1,6 @@
 # claude-toolkit — Claude Code 自定义扩展集
 
-为 Claude Code 定制的 9 个技能、2 个命令、1 个 git hook 模板，覆盖 GitHub 发布、项目结构规范化、AI 上下文文档、AI 教程生成、Qt TS 翻译、对话总结、文件审计、git 历史重写、PRD 撰写、提交守护等场景。
+为 Claude Code 定制的 9 个技能、2 个命令、1 个 git hook 模板、1 个 mcp 工具文档集，覆盖 GitHub 发布、项目结构规范化、AI 上下文文档、AI 教程生成、Qt TS 翻译、对话总结、文件审计、git 历史重写、PRD 撰写、提交守护等场景。
 
 ---
 
@@ -205,6 +205,13 @@ claude-toolkit/
 ├── hooks/                              # git hooks 模板
 │   ├── commit-msg                      # 自动剥离 Co-Authored-By 尾缀
 │   └── setup.sh                        # 一键安装脚本
+├── mcp/                                # MCP/Skill 工具介绍与配置文档
+│   ├── README.md                       # 工具集索引
+│   ├── TEMPLATE.md                     # 工具文档模板
+│   ├── browseract.md                   # agent-browser 工具文档
+│   ├── codegraph.md                    # CodeGraph 工具文档
+│   ├── playwright.md                   # Playwright 工具文档
+│   └── tavily.md                       # Tavily 工具文档
 ├── agent-instructions/                # 用户级 AI 协作规范（按平台分发）
 │   ├── claude-code/                    # Claude Code 版 → ~/.claude/CLAUDE.md
 │   ├── codex/                          # Codex 版 → ~/.codex/AGENTS.md
